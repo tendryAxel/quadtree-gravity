@@ -29,6 +29,11 @@ class Vector2D:
             self.x / other,
             self.y / other,
         )
+    
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Vector2D):
+            return False
+        return self.x == other.x and self.y == other.y
 
 
 @dataclasses.dataclass
