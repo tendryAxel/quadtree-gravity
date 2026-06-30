@@ -9,7 +9,7 @@ def main():
     print(tree._grid_str())
     tree.add(Vector2D(1, 2), 1)
     print(tree._grid_str())
-    tree.add(Vector2D(1.1, 1), 1)
+    tree.add(Vector2D(9, 9), 1)
     print(tree._grid_str())
 
 if __name__ == "__main__":

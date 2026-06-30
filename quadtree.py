@@ -89,7 +89,7 @@ class QuadTree:
 
             next_index_offset = self._position_to_index(position, current_start_position, current_size)
 
-            current_node_index += next_index_offset + 1
+            current_node_index = current_tree_section[next_index_offset]
             current_size /= 2
             current_start_position += (self._index_to_relative_normalized_position(next_index_offset) * current_size)
         
@@ -175,9 +175,25 @@ class QuadTree:
 
         def recurse(node, x, y, w, h):
             children = self.tree[node]
+
+            # Leaf: write its mass
             if children is None:
+                leaf = self.nodes[node]
+                if leaf is not None and w >= 3 and h >= 1:
+                    text = f"{leaf.mass:g}"
+
+                    # Don't overflow the cell.
+                    text = text[: max(0, w - 2)]
+
+                    tx = x + max(0, (w - len(text)) // 2)
+                    ty = y + h // 2
+
+                    for i, c in enumerate(text):
+                        if tx + i < x + w:
+                            canvas[ty][tx + i] = c
                 return
 
+            # Internal node: draw the subdivision.
             mx = x + w // 2
             my = y + h // 2
 
@@ -186,9 +202,9 @@ class QuadTree:
             canvas[my][mx] = "+"
 
             quads = [
-                (children[0], x, y, w // 2, h // 2),            # NW
-                (children[1], mx, y, w - w // 2, h // 2),       # NE
-                (children[2], x, my, w // 2, h - h // 2),       # SW
+                (children[0], x,  y,  w // 2,     h // 2),      # NW
+                (children[1], mx, y,  w - w // 2, h // 2),      # NE
+                (children[2], x,  my, w // 2,     h - h // 2),  # SW
                 (children[3], mx, my, w - w // 2, h - h // 2),  # SE
             ]
 
