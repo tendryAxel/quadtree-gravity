@@ -53,20 +53,22 @@ class QuadTree:
         self,
         size: float,
         offset: Optional[Vector2D] = None,
+        max_recursion_fallback: int = 30,
     ):
         self.nodes: list[Optional[Node]] = [None]
         self.tree: list[Optional[tuple[int, int, int, int]]] = [None]
         self.size = size
         self.offset = offset if offset is not None else Vector2D.zero()
+        self.max_recursion_fallback = max_recursion_fallback
 
-    def add(self, position: Vector2D, mass: float, max_recursion_fallback: int = 10_000) -> None:
+    def add(self, position: Vector2D, mass: float) -> None:
         recursion = -1
         
         current_node_index = 0
         current_size = self.size
         current_start_position = self.offset
 
-        while recursion <= max_recursion_fallback:
+        while recursion <= self.max_recursion_fallback:
             recursion += 1
 
             current_node = self.nodes[current_node_index]
@@ -93,7 +95,7 @@ class QuadTree:
             current_size /= 2
             current_start_position += (self._index_to_relative_normalized_position(next_index_offset) * current_size)
         
-        raise Error(f"Recursion searching reach max value, {max_recursion_fallback}")
+        raise Error(f"Recursion searching reach max value, {self.max_recursion_fallback}")
 
     @staticmethod
     def _position_to_index(
